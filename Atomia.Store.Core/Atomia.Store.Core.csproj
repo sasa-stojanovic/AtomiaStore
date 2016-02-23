@@ -70,6 +70,8 @@
   <ItemGroup>
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\ContactData.cs" />
+    <Compile Include="Models\CounterRange.cs" />
+    <Compile Include="Models\CounterType.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\CustomerType.cs" />

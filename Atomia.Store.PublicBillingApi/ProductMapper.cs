@@ -128,7 +128,7 @@ namespace Atomia.Store.PublicBillingApi
                     });
                 }
             }
-            else
+            else if (apiProduct.Prices != null && apiProduct.Prices.Count > 0)
             {
                 var price = GetPrice(apiProduct.Prices, apiProduct.Taxes);
 
@@ -137,6 +137,87 @@ namespace Atomia.Store.PublicBillingApi
                     Price = price,
                     RenewalPeriod = null
                 });
+            }
+
+            if (apiProduct.CounterTypes != null && apiProduct.CounterTypes.Count > 0)
+            {
+                foreach (var apiCounterType in apiProduct.CounterTypes)
+                {
+                    PricingVariant counterPrice = new PricingVariant { FixedPrice = false };
+                    CounterType counterType = new CounterType();
+                    counterType.CounterId = apiCounterType.CounterId;
+                    counterType.Name = apiCounterType.Name;
+                    counterType.Description = apiCounterType.Description;
+
+                    if (apiCounterType.MultilanguageNames != null)
+                    {
+                        var names = apiCounterType.MultilanguageNames.Where(l => l.LanguageIso639Name.ToUpper() == this.language.PrimaryTag);
+                        var regionalName = names.FirstOrDefault(l => l.LanguageCulture.ToUpper() == this.language.RegionTag);
+                        var standardName = names.FirstOrDefault();
+
+                        if (regionalName != null)
+                        {
+                            counterType.Name = regionalName.Value;
+                        }
+                        else if (standardName != null)
+                        {
+                            counterType.Name = standardName.Value;
+                        }
+                    }
+
+                    if (apiCounterType.MultilanguageDescriptions != null)
+                    {
+                        var descriptions = apiCounterType.MultilanguageDescriptions.Where(l => l.LanguageIso639Name.ToUpper() == this.language.PrimaryTag);
+                        var regionalDescription = descriptions.FirstOrDefault(l => l.LanguageCulture.ToUpper() == this.language.RegionTag);
+                        var standardDescription = descriptions.FirstOrDefault();
+
+                        if (regionalDescription != null)
+                        {
+                            counterType.Description = regionalDescription.Value;
+                        }
+                        else if (standardDescription != null)
+                        {
+                            counterType.Description = standardDescription.Value;
+                        }
+                    }
+
+                    counterType.UnitName = apiCounterType.UnitName;
+                    counterType.UnitValue = apiCounterType.UnitValue;
+                    counterType.RequireSubscription = apiCounterType.RequireSubscription;
+                    counterType.Ranges = new List<CounterRange>();
+
+                    foreach (var apiCounterRange in apiCounterType.Ranges)
+                    {
+                        CounterRange counterRange = new CounterRange();
+                        counterRange.Name = apiCounterRange.Name;
+
+                        if (apiCounterRange.MultilanguageNames != null)
+                        {
+                            var names = apiCounterRange.MultilanguageNames.Where(l => l.LanguageIso639Name.ToUpper() == this.language.PrimaryTag);
+                            var regionalName = names.FirstOrDefault(l => l.LanguageCulture.ToUpper() == this.language.RegionTag);
+                            var standardName = names.FirstOrDefault();
+
+                            if (regionalName != null)
+                            {
+                                counterRange.Name = regionalName.Value;
+                            }
+                            else if (standardName != null)
+                            {
+                                counterRange.Name = standardName.Value;
+                            }
+                        }
+
+                        counterRange.LowerMargin = apiCounterRange.LowerMargin;
+                        counterRange.UpperMargin = apiCounterRange.UpperMargin;
+                        counterRange.Price = GetPrice(apiCounterRange.Prices, apiProduct.Taxes);
+
+                        counterType.Ranges.Add(counterRange);
+                    }
+
+                    counterPrice.CounterType = counterType;
+
+                    product.PricingVariants.Add(counterPrice);
+                }
             }
         }
 
