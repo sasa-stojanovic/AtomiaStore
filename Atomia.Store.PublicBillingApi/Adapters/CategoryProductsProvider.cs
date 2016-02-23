@@ -60,7 +60,9 @@ namespace Atomia.Store.PublicBillingApi.Adapters
                 products.Add(product);
             }
 
-            return products.OrderBy(p => p.PricingVariants.Min(v => v.Price));
+            var sortedProducts = products.Where(p => p.PricingVariants.Any(v => v.FixedPrice)).OrderBy(p => p.PricingVariants.Min(v => v.Price)).ToList();
+            sortedProducts.AddRange(products.Where(p => !p.PricingVariants.Any(v => v.FixedPrice)).OrderBy(p => p.PricingVariants.Min(v => v.CounterType.Ranges.Min(r => r.Price))).ToList());
+            return sortedProducts;
         }
     }
 }

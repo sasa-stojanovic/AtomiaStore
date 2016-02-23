@@ -31,7 +31,30 @@ namespace Atomia.Store.AspNetMvc.Controllers
             var model = DependencyResolver.Current.GetService<ProductListingViewModel>();
             model.Query = query;
             model.ListingType = listingType;
-            
+
+            model.UseSliders = false;
+            if (System.Web.HttpContext.Current.Application["UseSliders"] != null)
+            {
+                bool useSliders;
+                if (Boolean.TryParse(System.Web.HttpContext.Current.Application["UseSliders"].ToString().ToLower(), out useSliders))
+                {
+                    model.UseSliders = useSliders;
+                }
+            }
+            if (System.Web.HttpContext.Current.Application["SliderConfig"] != null)
+            {
+                model.SliderConfig = System.Web.HttpContext.Current.Application["SliderConfig"].ToString();
+            }
+            model.VpsPriceDecimalPlaces = 4;
+            if (System.Web.HttpContext.Current.Application["VpsPriceDecimalPlaces"] != null)
+            {
+                int vpsPriceDecimalPrices = 4;
+                if (Int32.TryParse(System.Web.HttpContext.Current.Application["VpsPriceDecimalPlaces"].ToString(), out vpsPriceDecimalPrices))
+                {
+                    model.VpsPriceDecimalPlaces = vpsPriceDecimalPrices;
+                }
+            }
+
             return View(viewName, model);
         }
 
