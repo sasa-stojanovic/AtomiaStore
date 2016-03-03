@@ -177,6 +177,10 @@
     <value>{1} {2} - {0}</value>
     <comment>0 = price, 1 = period, 2 = unit</comment>
   </data>
+  <data name="PricingVariantUBPDisplay" xml:space="preserve">
+    <value>{0} (from {1} to {2} {3}) - {4}</value>
+    <comment>0 = range name, 1 = counter from, 2 = counter to, 3 = unit name, 4 = price</comment>
+  </data>
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>

@@ -21,6 +21,28 @@ namespace Atomia.Store.AspNetMvc.Models
         }
 
         /// <summary>
+        /// Is price fixed price
+        /// </summary>
+        public bool FixedPrice
+        {
+            get
+            {
+                return pricingVariant.FixedPrice;
+            }
+        }
+
+        /// <summary>
+        /// Display currency code
+        /// </summary>
+        public string PriceDisplayFormat
+        {
+            get
+            {
+                return currencyFormatter.FormatAmount(1.11m).Replace("1", "#").Replace("0","");
+            }
+        }
+
+        /// <summary>
         /// Display formatted and localized renewal period
         /// </summary>
         public RenewalPeriodModel RenewalPeriod
@@ -48,6 +70,22 @@ namespace Atomia.Store.AspNetMvc.Models
             get
             {
                 return currencyFormatter.FormatAmount(pricingVariant.Price);
+            }
+        }
+
+        /// <summary>
+        /// Display formatted and localized conuter type
+        /// </summary>
+        public CounterTypeModel CounterType
+        {
+            get
+            {
+                if (pricingVariant.CounterType != null)
+                {
+                    return new CounterTypeModel(pricingVariant.CounterType);
+                }
+
+                return null;
             }
         }
 
